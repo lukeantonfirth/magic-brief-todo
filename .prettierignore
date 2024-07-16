@@ -1,0 +1,13 @@
+# See https://prettier.io/docs/en/ignore.html for more about ignoring files.
+
+.next
+.vscode
+
+coverage
+dist
+node_modules
+public
+templates/**
+
+package-lock.json
+yarn.lock
