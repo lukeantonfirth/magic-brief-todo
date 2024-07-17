@@ -3,7 +3,7 @@ import cx from 'classnames';
 
 import { ListItemProps } from './ListItem.interfaces';
 
-import { ButtonIconOnly } from '@/components';
+import { ButtonIconOnly, StatusTag } from '@/components';
 import { useDeleteTaskMutation } from '@/hooks';
 import { handleConsoleError } from '@/utils';
 
@@ -36,58 +36,48 @@ const ListItem = ({
   return (
     <ListItemElement
       className={cx(
-        'flex flex-col md:flex-row items-center justify-start',
+        'flex flex-col md:flex-row items-center justify-between',
         'py-3',
         'px-3',
         'border-b',
         { 'list-none': isList },
       )}>
-      <input
-        type="checkbox"
-        className={cx(
-          'h-4 w-4',
-          'mr-4',
-          'rounded',
-          'border-gray-300',
-        )}
-        defaultChecked={completed}
-        onChange={handleOnTaskInputUpdate}
-        aria-label={`Mark ${title} as ${completed ? 'incomplete' : 'complete'}`}
-      />
-      <h2
-        className={cx(
-          'flex-grow',
-          'text-sm',
-          'tracking-wide',
-          'text-gray-600',
-        )}>
-        {title}
-      </h2>
+      <div className="flex items-center">
+        <input
+          type="checkbox"
+          className={cx(
+            'h-4 w-4',
+            'mr-4',
+            'rounded',
+            'border-gray-300',
+          )}
+          defaultChecked={completed}
+          onChange={handleOnTaskInputUpdate}
+          aria-label={`Mark ${title} as ${completed ? 'incomplete' : 'complete'}`}
+        />
+        <h2
+          className={cx(
+            'flex-grow',
+            'text-sm',
+            'tracking-wide',
+            'text-gray-600',
+          )}>
+          {title}
+        </h2>
+      </div>
+
       <div
         className={cx(
           'flex items-center',
-          'mx-4', // Add some horizontal margin to center it nicely
+          'mx-4',
           'text-gray-500',
           'text-sm',
         )}>
-        <span className="mr-1">due</span>
+        <span className="mr-1">Due on:</span>
         <span>{dueDate}</span>
       </div>
       <div className={cx('flex items-center', 'ml-2')}>
-        <span
-          className={cx(
-            'px-2 py-1',
-            'rounded',
-            'text-xs',
-            'font-bold',
-            'text-black',
-            {
-              'bg-green-300': completed,
-              'bg-orange-300': !completed,
-            },
-          )}>
-          {completed ? 'COMPLETED' : 'NOT COMPLETED'}
-        </span>
+        <StatusTag isCompleted={completed} />
         <ButtonIconOnly
           additionalClassNames={cx('ml-4', '!rounded-full')}
           aria-label="Delete task"

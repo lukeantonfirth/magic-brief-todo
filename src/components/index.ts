@@ -6,4 +6,5 @@ export * from './Icons';
 export * from './List';
 export * from './ListItem';
 export * from './Spinner';
+export * from './StatusTag';
 export * from './TaskInput';

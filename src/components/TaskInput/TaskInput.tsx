@@ -50,7 +50,7 @@ export const TaskInput = ({
         <DatePicker
           id="task-date"
           onDateChange={onDateChange}
-          additionalClassNames={cx('top-[86px]', 'left-[12px]')}
+          additionalClassNames={cx('top-[70px]', 'left-[12px]')}
         />
 
         <ButtonIconOnly
@@ -59,7 +59,7 @@ export const TaskInput = ({
             '-translate-y-1/2',
             'absolute',
             'right-[10px]',
-            'top-[75px]',
+            'top-[86px]',
             'transform',
           )}
           icon="plus"
