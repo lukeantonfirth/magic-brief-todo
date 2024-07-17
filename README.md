@@ -97,3 +97,73 @@ MAGIC-BRIEF-TODO
 │       ├── localStorageHelpers.ts
 │       └── trpc.ts
 ```
+
+# Enhancements List
+
+## 1. Offline Task Flags
+
+- **Objective**: Add a flag to each offline task indicating whether it is a "create", "update", or "delete" operation.
+- **Implementation**:
+  - Modify the local storage structure to include an operation flag for each task.
+  - Update the task creation, update, and deletion functions to set the appropriate flag.
+  - Enhance the `handleOnline` function to cycle through the list of tasks in local storage and trigger the correct mutation based on the flag.
+  - Example structure:
+    ```json
+    {
+      "tasks": [
+        {
+          "id": 1,
+          "title": "Task 1",
+          "dueDate": "2024-07-17",
+          "completed": false,
+          "operation": "create"
+        },
+        {
+          "id": 2,
+          "title": "Task 2",
+          "dueDate": "2024-07-18",
+          "completed": true,
+          "operation": "update"
+        }
+        {
+          "id": 3,
+          "title": "Task 3",
+          "dueDate": "2024-07-19",
+          "completed": false,
+          "operation": "delete"
+        }
+      ]
+    }
+    ```
+
+## 2. Modular Routes with Prisma and tRPC
+
+- **Objective**: Refactor Prisma and tRPC routes to be more modular, enabling better scalability.
+- **Implementation**:
+  - Break down existing routes into smaller, reusable modules.
+  - Organize routes by functionality.
+  - Create a clear directory structure for the routes to improve maintainability.
+  - Example structure:
+    ```
+    src/
+    ├── server/
+    │   ├── context.ts
+    │   ├── routers/
+    │   │   ├── index.ts
+    │   │   ├── taskRouter.ts
+    │   │   ├── userRouter.ts
+    │   │   └── ...
+    │   └── ...
+    ```
+
+## Implementation Plan
+
+1. **Add Offline Task Flags**:
+
+   - Modify local storage functions to include operation flags.
+   - Update task mutation functions to set operation flags appropriately.
+   - Enhance `handleOnline` function to process tasks based on their operation flags.
+
+2. **Improve Prisma and tRPC Routes**:
+   - Identify existing routes and categorize them by functionality.
+   - Update imports and route registrations to use the new modular structure.
