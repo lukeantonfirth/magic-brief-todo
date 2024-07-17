@@ -52,11 +52,11 @@ export const TaskInput = ({
         <ButtonIconOnly
           type="submit"
           additionalClassNames={cx(
-            'absolute',
-            'top-[75px]',
-            'right-[10px]',
-            'transform',
             '-translate-y-1/2',
+            'absolute',
+            'right-[10px]',
+            'top-[75px]',
+            'transform',
           )}
           icon="plus"
         />
