@@ -81,6 +81,7 @@ const ListItem = ({
         <ButtonIconOnly
           additionalClassNames={cx('ml-4', '!rounded-full')}
           aria-label="Delete task"
+          label="Delete task"
           backgroundColor="red"
           icon="trash"
           onClick={handleDeleteTask}

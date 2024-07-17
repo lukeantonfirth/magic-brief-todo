@@ -12,6 +12,7 @@ const ButtonIconOnly = ({
   additionalClassNames,
   backgroundColor = 'blue',
   icon = 'plus',
+  label: buttonLabel,
   onClick,
   textColor = 'white',
   type = 'button',
@@ -30,6 +31,7 @@ const ButtonIconOnly = ({
       type={type}
       onClick={onClick}>
       <Icon />
+      <label className="sr-only">{buttonLabel}</label>
     </button>
   );
 };

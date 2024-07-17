@@ -54,7 +54,6 @@ export const TaskInput = ({
         />
 
         <ButtonIconOnly
-          type="submit"
           additionalClassNames={cx(
             '-translate-y-1/2',
             'absolute',
@@ -62,7 +61,10 @@ export const TaskInput = ({
             'top-[86px]',
             'transform',
           )}
+          aria-label="Add Task"
           icon="plus"
+          label="Add Task"
+          type="submit"
         />
       </fieldset>
     </form>

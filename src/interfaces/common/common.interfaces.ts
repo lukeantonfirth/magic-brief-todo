@@ -35,3 +35,10 @@ export interface ITextColor {
 export interface IIdentifier {
   id?: string;
 }
+
+/**
+ * Specify a label that is associated with the button or input
+ */
+export interface ILabel {
+  label: string;
+}

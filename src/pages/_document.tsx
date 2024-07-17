@@ -17,6 +17,10 @@ class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
+          <title>
+            Todo App for keeping track of anything anywhere!
+          </title>
+
           <meta
             name="description"
             content="Stay on top of all the random stuff you have to do with this simple and easy to use to do list, so you can remember to go to the toilet... or just get yourself a pair of magic briefs! Just crap right in them! the crap is then processed through the briefs and omitted into the atmosphere reducing carbon emissions by 99.9%!"
