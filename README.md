@@ -24,7 +24,7 @@ Follow these steps to get the project up and running on your local machine:
 
 Make sure you have `yarn` installed. If not, install it from [here](https://classic.yarnpkg.com/en/docs/install/).
 
-`clone link here`
+`git clone git@github.com:lukeantonfirth/magic-brief-todo.git`
 `cd magic-brief-todo`
 `yarn`
 
