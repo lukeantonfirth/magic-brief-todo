@@ -1,12 +1,12 @@
 import { IUseTaskMutationParams } from '@/interfaces';
 import { trpc } from '@/utils';
 
-export const useDeleteAllTaskMutation = ({
+export const useUpdateOrCreateTasksMutation = ({
   onSuccess,
   onError,
 }: IUseTaskMutationParams) => {
   const { mutate, isLoading, data } = trpc.useMutation(
-    ['deleteAllTasks'],
+    ['updateOrCreateTasks'],
     {
       onError: (error) => {
         onError(error);

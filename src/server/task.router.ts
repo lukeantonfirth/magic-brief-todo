@@ -30,7 +30,7 @@ export const serverRouter = trpc
   .mutation('updateTask', {
     input: zod.object({
       completed: zod.boolean(),
-      dueDate: zod.string().optional(),
+      dueDate: zod.string(),
       id: zod.number(),
       title: zod.string(),
     }),
@@ -69,38 +69,6 @@ export const serverRouter = trpc
           id: id,
         },
       });
-    },
-  })
-  .mutation('updateOrCreateTasks', {
-    input: zod.array(
-      zod.object({
-        completed: zod.boolean(),
-        dueDate: zod.string().optional().default(''),
-        id: zod.number().optional(),
-        title: zod.string(),
-      }),
-    ),
-    resolve: async ({ input, ctx }) => {
-      const upsertTasks = await Promise.all(
-        input.map((task) =>
-          ctx.prisma.task.upsert({
-            create: {
-              completed: task.completed,
-              dueDate: task.dueDate,
-              title: task.title,
-            },
-            // Use -1 or another impossible ID if creating a new task
-            update: {
-              completed: task.completed,
-              dueDate: task.dueDate,
-              title: task.title,
-            },
-            where: { id: task.id ?? -1 },
-          }),
-        ),
-      );
-
-      return upsertTasks;
     },
   });
 

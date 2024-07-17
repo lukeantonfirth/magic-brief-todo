@@ -1,8 +1,9 @@
 import { TRPCClientErrorLike } from '@trpc/client';
 
-import { ServerRouter } from '../../src/server/router';
+import { Task } from '@prisma/client';
+import { ServerRouter } from '../../server/router';
 
 export interface IUseTaskMutationParams {
   onError: (error: TRPCClientErrorLike<ServerRouter>) => void;
-  onSuccess: () => void;
+  onSuccess: (task?: Task | null) => void;
 }

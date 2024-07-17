@@ -1,23 +1,25 @@
-import { IUseTaskMutationParams } from '../../../interfaces/db/db.interfaces';
-
-import { trpc } from '@/utils/trpc';
+import { IUseTaskMutationParams } from '@/interfaces';
+import { trpc } from '@/utils';
 
 export const useUpdateTaskMutation = ({
   onSuccess,
   onError,
 }: IUseTaskMutationParams) => {
-  const { mutate, isLoading, data } = trpc.useMutation(['updateTask'], {
-    onSuccess: () => {
-      onSuccess();
+  const { mutate, isLoading, data } = trpc.useMutation(
+    ['updateTask'],
+    {
+      onError: (error) => {
+        onError(error);
+      },
+      onSuccess: () => {
+        onSuccess();
+      },
     },
-    onError: (error) => {
-      onError(error);
-    },
-  });
+  );
 
   return {
-    mutationHandler: mutate,
-    isLoading,
     data,
+    isLoading,
+    mutationHandler: mutate,
   };
 };

@@ -1,18 +1,21 @@
+import React from 'react';
+import { AppProps } from 'next/app';
 import '../styles/globals.css';
-import '@fontsource/poppins';
 import { withTRPC } from '@trpc/next';
-import { AppType } from 'next/dist/shared/lib/utils';
+
+import '@fontsource/poppins';
 
 import type { ServerRouter } from '@/server/router';
 
-const App: AppType = ({ Component, pageProps }) => {
+const App: React.FC<AppProps> = ({ Component, pageProps }) => {
   return <Component {...pageProps} />;
 };
 
+// Plz kindly run locally! I can get this running later in the week ❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️ Deets in doc!
 export default withTRPC<ServerRouter>({
   config() {
-    const url = process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}/api/trpc`
+    const url = process.env.URL_WHERE_THE_DB_WILL_BE_HOSTED_EVENTUALLY
+      ? `https://${process.env.URL_WHERE_THE_DB_WILL_BE_HOSTED_EVENTUALLY}/api/trpc`
       : 'http://localhost:3000/api/trpc';
 
     return { url };

@@ -69,14 +69,11 @@ export default [
           selfClosing: 'tag-aligned',
         },
       ],
-      'react/jsx-first-prop-new-line': [
-        'error',
-        'multiline',
-      ],
+      'react/jsx-first-prop-new-line': ['error', 'multiline'],
       'react/jsx-max-props-per-line': [
         'error',
         {
-          maximum: 1,
+          maximum: 3,
           when: 'always',
         },
       ],

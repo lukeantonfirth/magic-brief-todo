@@ -1,18 +1,35 @@
-'use client';
 import React, { memo, useCallback } from 'react';
 import cx from 'classnames';
+
 import { ListItemProps } from './ListItem.interfaces';
+
+import { ButtonIconOnly } from '@/components';
+import { useDeleteTaskMutation } from '@/hooks';
+import { handleConsoleError } from '@/utils';
 
 const ListItem = ({
   item,
   onUpdate,
+  onDelete,
   isList = true,
 }: ListItemProps) => {
-  const { completed, title } = item;
+  const { completed, title, dueDate, id } = item;
 
-  const handleChange = useCallback(() => {
+  const { mutationHandler: deleteTaskMutation } =
+    useDeleteTaskMutation({
+      onError: (error) =>
+        handleConsoleError(`Error deleting task ${error}`),
+      onSuccess: (res) => console.log(res),
+    });
+
+  const handleOnTaskInputUpdate = useCallback(() => {
     onUpdate(item);
   }, [onUpdate, item]);
+
+  const handleDeleteTask = useCallback(() => {
+    onDelete(id);
+    deleteTaskMutation({ id });
+  }, [deleteTaskMutation, item]);
 
   const ListItemElement = isList ? 'li' : 'div';
 
@@ -28,13 +45,13 @@ const ListItem = ({
       <input
         type="checkbox"
         className={cx(
-          'mr-4',
           'h-4 w-4',
+          'mr-4',
           'rounded',
           'border-gray-300',
         )}
         defaultChecked={completed}
-        onChange={handleChange}
+        onChange={handleOnTaskInputUpdate}
         aria-label={`Mark ${title} as ${completed ? 'incomplete' : 'complete'}`}
       />
       <h2
@@ -46,21 +63,39 @@ const ListItem = ({
         )}>
         {title}
       </h2>
-      <span
+      <div
         className={cx(
-          'px-2 py-1',
-          'rounded',
-          'text-white',
-          'text-xs',
-          'font-bold',
-          'ml-2',
-          {
-            'bg-purple-700': completed,
-            'bg-red-700': !completed,
-          },
+          'flex items-center',
+          'mx-4', // Add some horizontal margin to center it nicely
+          'text-gray-500',
+          'text-sm',
         )}>
-        {completed ? 'COMPLETED' : 'NOT COMPLETED'}
-      </span>
+        <span className="mr-1">due</span>
+        <span>{dueDate}</span>
+      </div>
+      <div className={cx('flex items-center', 'ml-2')}>
+        <span
+          className={cx(
+            'px-2 py-1',
+            'rounded',
+            'text-xs',
+            'font-bold',
+            'text-black',
+            {
+              'bg-green-300': completed,
+              'bg-orange-300': !completed,
+            },
+          )}>
+          {completed ? 'COMPLETED' : 'NOT COMPLETED'}
+        </span>
+        <ButtonIconOnly
+          additionalClassNames={cx('ml-4', '!rounded-full')}
+          aria-label="Delete task"
+          backgroundColor="red"
+          icon="trash"
+          onClick={handleDeleteTask}
+        />
+      </div>
     </ListItemElement>
   );
 };

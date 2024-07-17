@@ -1,131 +1,240 @@
 'use client';
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import type { NextPage } from 'next';
+
+import { DateValue } from 'react-aria-components';
+
 import { Task } from '@prisma/client';
+import cx from 'classnames';
 
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  List,
-} from '../components/Card';
-import { handleConsoleError } from '../utils';
-import {
-  useCreateTaskMutation,
   useDeleteAllTaskMutation,
-  useUpdateTaskMutation,
-} from '../hooks';
+  useUpdateOrCreateTasksMutation,
+} from '@/hooks';
 
-import { trpc } from '@/utils/trpc';
-import { ListItem, TaskInput } from '@/components';
+import {
+  formatDatePickerDate,
+  generateUniqueNumber,
+  handleConsoleError,
+  loadTasksFromLocalStorage,
+  saveTasksToLocalStorage,
+  trpc,
+  waitForOnline,
+} from '@/utils';
+
+import {
+  Container,
+  Header,
+  List,
+  ListItem,
+  Spinner,
+  TaskInput,
+} from '@/components';
 
 const Home: NextPage = () => {
   const [taskName, setTaskName] = useState<Task['title']>('');
+  const [formattedDate, setFormattedDate] = useState<string>('');
+  const [localList, setLocalList] = useState<Task[]>([]);
 
-  const { data: list, refetch } = trpc.useQuery(['findAll']);
-
-  const {
-    mutationHandler: createTaskMutation,
-    isLoading: isCreateTaskMutationLoading,
-  } = useCreateTaskMutation({
-    onError: (error) =>
-      handleConsoleError(`Error creating task ${error}`),
-    onSuccess: refetch,
+  const { data: list, refetch } = trpc.useQuery(['findAll'], {
+    onSuccess: (data) => {
+      setLocalList(data);
+      saveTasksToLocalStorage(data);
+    },
   });
 
   const {
     mutationHandler: deleteAllTasksMutation,
-    isLoading: isDeleteAllTasksMutationLoading,
+    isLoading: isDeleteAllTasksMutationLoading = false,
   } = useDeleteAllTaskMutation({
     onError: (error) =>
-      handleConsoleError(`Error deleting all tasks ${error}`),
-    onSuccess: refetch,
+      handleConsoleError(`Error deleting all tasks: ${error}`),
+    onSuccess: () => refetch(),
   });
 
   const {
-    mutationHandler: updateTaskMutation,
-    isLoading: isUpdateTaskMutationLoading,
-  } = useUpdateTaskMutation({
-    onError: (error) =>
-      handleConsoleError(`Error deleting all tasks ${error}`),
-    onSuccess: refetch,
+    mutationHandler: updateOrCreateTasksMutation,
+    isLoading: isUpdatingOrCreatingTasks = false,
+  } = useUpdateOrCreateTasksMutation({
+    onError: (error) => {
+      refetch();
+      handleConsoleError(
+        `Error updating and creating tasks: ${error}`,
+      );
+    },
+    onSuccess: () => refetch(),
   });
 
-  const createTask = useCallback(() => {
+  const handleDeleteAllTasks = useCallback(() => {
+    if (!list) {
+      return;
+    }
+
+    deleteAllTasksMutation({
+      ids: list.map((item) => item.id),
+    });
+
+    setLocalList([]);
+    saveTasksToLocalStorage([]);
+  }, [list, deleteAllTasksMutation]);
+
+  const handleCreateTask = useCallback(() => {
     if (!taskName) {
       return;
     }
 
-    createTaskMutation({
+    const newTask: Task = {
       completed: false,
-      dueDate: new Date().toISOString(),
+      dueDate: formattedDate,
+      id: Number(generateUniqueNumber()), //temp offline id
       title: taskName,
+    } as const;
+
+    setLocalList((prevList) => {
+      const updatedList = [...prevList, newTask];
+      saveTasksToLocalStorage(updatedList);
+      return updatedList;
     });
 
+    updateOrCreateTasksMutation([newTask]);
+
     setTaskName('');
-  }, [taskName, createTaskMutation]);
+  }, [formattedDate, taskName, updateOrCreateTasksMutation]);
 
-  const handleDeleteAllTasks = useCallback(() => {
-    if (list?.length) {
-      deleteAllTasksMutation({
-        ids: list.map((item) => item.id),
+  const handleUpdateTask = useCallback(
+    ({ completed, dueDate, id, title }: Task) => {
+      setLocalList((prevList) => {
+        const updatedList = prevList.map((task) =>
+          task.id === id ? { ...task, completed: !completed } : task,
+        );
+        saveTasksToLocalStorage(updatedList);
+        return updatedList;
       });
-    }
-  }, [list, deleteAllTasksMutation]);
 
-  const updateTask = useCallback(
-    ({ completed, id, title }: Task) => {
-      updateTaskMutation({
-        completed: !completed,
-        dueDate: new Date().toISOString() ?? '',
-        id,
-        title,
-      });
+      //Using upset to minimize code and simplify the syncronization
+      updateOrCreateTasksMutation([
+        {
+          completed: !completed,
+          dueDate: dueDate,
+          id,
+          title,
+        },
+      ]);
     },
-    [updateTaskMutation],
+    [updateOrCreateTasksMutation],
   );
 
+  const handleDeleteTask = useCallback((id: Task['id']) => {
+    setLocalList((prevList) => {
+      const updatedList = prevList.filter((task) => task.id !== id);
+
+      saveTasksToLocalStorage(updatedList);
+
+      return updatedList;
+    });
+  }, []);
+
+  const handleOnDateChange = (date: DateValue) => {
+    setFormattedDate(formatDatePickerDate(date));
+  };
+
+  const handleOnTaskNameInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const {
+      target: { value },
+    } = event;
+
+    setTaskName(value);
+  };
+
+  const syncLocalTasksWithServer = useCallback(async () => {
+    await waitForOnline(); // Wait until the app is online
+
+    const localTasks = loadTasksFromLocalStorage();
+
+    if (!list) {
+      return;
+    }
+
+    updateOrCreateTasksMutation(localTasks);
+  }, [list, updateOrCreateTasksMutation]);
+
+  useEffect(() => {
+    setLocalList(loadTasksFromLocalStorage());
+  }, []);
+
+  useEffect(() => {
+    const handleOnline = () => {
+      syncLocalTasksWithServer();
+    };
+
+    window.addEventListener('online', handleOnline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+    };
+  }, [syncLocalTasksWithServer]);
+
   const isLoading =
-    isCreateTaskMutationLoading ||
-    isDeleteAllTasksMutationLoading ||
-    isUpdateTaskMutationLoading;
-  //TODO!! Pull all of this out and make html accessible
-  //TODO!! Add a loading spinner
-  //TODO!! Add a message for when there are no tasks
-  //TODO!! Clean tailwind
-  //TODO!! Simplify Components
-  //TODO!! Add offline storage sync when online
-  //TODO Add a way to delete a single task
-  //TODO Clean all variable names
-  //TODO Add all generic types
-  //TODO Deploy to vercel
-  //TODO figure out how to deploy DB and stuff
+    isDeleteAllTasksMutationLoading || isUpdatingOrCreatingTasks;
+
   return (
     <main>
-      <Card>
-        <CardContent>
-          <CardHeader
+      {isLoading && <Spinner />}
+      <Container>
+        <section
+          aria-labelledby="todo-header"
+          className={cx(
+            'bg-white',
+            'drop-shadow-md',
+            'rounded-lg',
+            'w-5/6',
+            'md:w-4/6',
+            'lg:w-3/6',
+            'xl:w-2/6',
+          )}>
+          <Header
             title="Todo List"
-            listLength={list?.length ?? 0}
-            clearAllFn={handleDeleteAllTasks}
+            listLength={localList.length}
+            onDeleteAllTasks={handleDeleteAllTasks}
           />
           <List>
-            {list?.map((item) => (
+            {localList.map((item) => (
               <ListItem
                 key={item.id}
                 item={item}
-                onUpdate={updateTask}
+                onDelete={() => handleDeleteTask(item.id)}
+                onUpdate={handleUpdateTask}
               />
             ))}
           </List>
-        </CardContent>
-        <TaskInput
-          value={taskName}
-          onChange={(event) => setTaskName(event.target.value)}
-          submit={createTask}
-        />
-      </Card>
+        </section>
+
+        <section
+          aria-labelledby="add-task-header"
+          className={cx(
+            'bg-white',
+            'drop-shadow-md',
+            'mt-4',
+            'rounded-lg',
+            'w-5/6',
+            'md:w-4/6',
+            'lg:w-3/6',
+            'xl:w-2/6',
+          )}>
+          <h2 id="add-task-header" className="sr-only">
+            Add a new task
+          </h2>
+          <TaskInput
+            onDateChange={handleOnDateChange}
+            onChange={handleOnTaskNameInputChange}
+            onSubmit={handleCreateTask}
+            value={taskName}
+          />
+        </section>
+      </Container>
     </main>
   );
 };
