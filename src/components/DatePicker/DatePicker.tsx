@@ -27,16 +27,21 @@ export const AriaDatePicker = ({
       id={id}
       onChange={onDateChange}
       className={cx('absolute', additionalClassNames)}>
-      <Label className={cx('sr-only')}>Select Due Date</Label>
-      <Group className={cx('relative', 'flex', 'items-center')}>
+      <Group
+        className={cx('relative', 'flex', 'items-center', 'gap-4')}>
+        <Label>Due Date</Label>
         <DateInput
           className={cx(
             'flex',
-            'space-x-1',
+            'items-center',
+            'gap-4',
             'px-2',
             'py-1',
-            'border',
+            'border-2',
+            'border-blue-100',
             'rounded-md',
+            'focus:border-blue-400',
+            'focus:outline-none',
           )}>
           {(segment) => (
             <DateSegment
