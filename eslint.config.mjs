@@ -77,7 +77,6 @@ export default [
           when: 'always',
         },
       ],
-      'sort-keys-fix/sort-keys-fix': 'warn',
       'unicorn/filename-case': [
         'error',
         {

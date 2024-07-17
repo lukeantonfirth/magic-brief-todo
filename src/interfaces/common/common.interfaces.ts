@@ -28,3 +28,10 @@ export interface IBgColor {
 export interface ITextColor {
   textColor?: ColorType;
 }
+
+/**
+ * Specify the identifier of the element
+ */
+export interface IIdentifier {
+  id?: string;
+}

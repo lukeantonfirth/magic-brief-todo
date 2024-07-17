@@ -19,10 +19,12 @@ import { AriaDatePickerProps } from './DatePickerProps.interfaces';
 
 export const AriaDatePicker = ({
   additionalClassNames,
+  id,
   onDateChange,
 }: AriaDatePickerProps) => {
   return (
     <DatePicker
+      id={id}
       onChange={onDateChange}
       className={cx('absolute', additionalClassNames)}>
       <Label className={cx('sr-only')}>Select Due Date</Label>
@@ -63,7 +65,7 @@ export const AriaDatePicker = ({
           'border',
           'rounded-md',
           'shadow-lg',
-          '!left-[905px]',
+          '!left-[975px]',
         )}>
         <Dialog>
           <Calendar>

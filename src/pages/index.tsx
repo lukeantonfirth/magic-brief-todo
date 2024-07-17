@@ -1,6 +1,11 @@
 'use client';
 
-import React, { useCallback, useState, useEffect } from 'react';
+import React, {
+  useCallback,
+  useState,
+  useEffect,
+  ChangeEvent,
+} from 'react';
 import type { NextPage } from 'next';
 
 import { DateValue } from 'react-aria-components';
@@ -33,13 +38,15 @@ import {
 } from '@/components';
 
 const Home: NextPage = () => {
-  const [taskName, setTaskName] = useState<Task['title']>('');
   const [formattedDate, setFormattedDate] = useState<string>('');
-  const [localList, setLocalList] = useState<Task[]>([]);
+  const [liveList, setLiveList] = useState<Task[]>([]);
+  const [taskName, setTaskName] = useState<Task['title']>('');
 
   const { data: list, refetch } = trpc.useQuery(['findAll'], {
+    onError: (error) =>
+      handleConsoleError(`Error fetching tasks: ${error}`),
     onSuccess: (data) => {
-      setLocalList(data);
+      setLiveList(data);
       saveTasksToLocalStorage(data);
     },
   });
@@ -48,22 +55,22 @@ const Home: NextPage = () => {
     mutationHandler: deleteAllTasksMutation,
     isLoading: isDeleteAllTasksMutationLoading = false,
   } = useDeleteAllTaskMutation({
+    onSuccess: () => refetch(),
     onError: (error) =>
       handleConsoleError(`Error deleting all tasks: ${error}`),
-    onSuccess: () => refetch(),
   });
 
   const {
     mutationHandler: updateOrCreateTasksMutation,
     isLoading: isUpdatingOrCreatingTasks = false,
   } = useUpdateOrCreateTasksMutation({
+    onSuccess: () => refetch(),
     onError: (error) => {
       refetch();
       handleConsoleError(
         `Error updating and creating tasks: ${error}`,
       );
     },
-    onSuccess: () => refetch(),
   });
 
   const handleDeleteAllTasks = useCallback(() => {
@@ -75,7 +82,7 @@ const Home: NextPage = () => {
       ids: list.map((item) => item.id),
     });
 
-    setLocalList([]);
+    setLiveList([]);
     saveTasksToLocalStorage([]);
   }, [list, deleteAllTasksMutation]);
 
@@ -91,9 +98,11 @@ const Home: NextPage = () => {
       title: taskName,
     } as const;
 
-    setLocalList((prevList) => {
+    setLiveList((prevList) => {
       const updatedList = [...prevList, newTask];
+
       saveTasksToLocalStorage(updatedList);
+
       return updatedList;
     });
 
@@ -104,11 +113,13 @@ const Home: NextPage = () => {
 
   const handleUpdateTask = useCallback(
     ({ completed, dueDate, id, title }: Task) => {
-      setLocalList((prevList) => {
+      setLiveList((prevList) => {
         const updatedList = prevList.map((task) =>
           task.id === id ? { ...task, completed: !completed } : task,
         );
+
         saveTasksToLocalStorage(updatedList);
+
         return updatedList;
       });
 
@@ -126,7 +137,8 @@ const Home: NextPage = () => {
   );
 
   const handleDeleteTask = useCallback((id: Task['id']) => {
-    setLocalList((prevList) => {
+    // Running a filter here so we don't have to call the db
+    setLiveList((prevList) => {
       const updatedList = prevList.filter((task) => task.id !== id);
 
       saveTasksToLocalStorage(updatedList);
@@ -140,7 +152,7 @@ const Home: NextPage = () => {
   };
 
   const handleOnTaskNameInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: ChangeEvent<HTMLInputElement>,
   ) => {
     const {
       target: { value },
@@ -162,7 +174,7 @@ const Home: NextPage = () => {
   }, [list, updateOrCreateTasksMutation]);
 
   useEffect(() => {
-    setLocalList(loadTasksFromLocalStorage());
+    setLiveList(loadTasksFromLocalStorage());
   }, []);
 
   useEffect(() => {
@@ -197,11 +209,11 @@ const Home: NextPage = () => {
           )}>
           <Header
             title="Todo List"
-            listLength={localList.length}
+            listLength={liveList.length}
             onDeleteAllTasks={handleDeleteAllTasks}
           />
           <List>
-            {localList.map((item) => (
+            {liveList.map((item) => (
               <ListItem
                 key={item.id}
                 item={item}

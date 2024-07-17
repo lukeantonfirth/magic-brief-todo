@@ -1,7 +1,16 @@
+/**
+ * Types for icon names.
+ */
 export type IconTypes = 'plus' | 'trash';
 
+/**
+ * Types for list elements.
+ */
 export type ListTypes = 'ul' | 'ol';
 
+/**
+ * Types for colors.
+ */
 export type ColorType =
   | 'blue'
   | 'red'
@@ -14,6 +23,9 @@ export type ColorType =
   | 'black'
   | 'white';
 
+/**
+ * Types for background colors with Tailwind CSS classes.
+ */
 export type BGColorTypes =
   | 'bg-blue-300'
   | 'bg-red-300'
@@ -26,6 +38,9 @@ export type BGColorTypes =
   | 'bg-black'
   | 'bg-white';
 
+/**
+ * Types for text colors with Tailwind CSS classes.
+ */
 export type TextColorTypes =
   | 'text-blue-300'
   | 'text-red-300'

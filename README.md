@@ -24,25 +24,19 @@ Follow these steps to get the project up and running on your local machine:
 
 Make sure you have `yarn` installed. If not, install it from [here](https://classic.yarnpkg.com/en/docs/install/).
 
-`git clone git@github.com:lukeantonfirth/magic-brief-todo.git`
-`cd magic-brief-todo`
-`yarn`
-
-yarn dev
+-`git clone git@github.com:lukeantonfirth/magic-brief-todo.git` -`cd magic-brief-todo` -`yarn`
 
 ## 2. Initialize Prisma and Set Up the Database
 
 Run the following commands to initialize Prisma with SQLite as the datasource provider, set up the database, and open Prisma Studio:
 
-`npx prisma init --datasource-provider sqlite`
-`npx prisma migrate dev --name init`
-`npx prisma studio` This will open up a visual of the db
+-`npx prisma init --datasource-provider sqlite` -`npx prisma migrate dev --name init` -`npx prisma studio` This will open up a visual of the db
 
 ## 3. Run the Development Server
 
 You're all set! Start the development server:
 
-`yarn dev`
+-`yarn dev`
 
 Open http://localhost:3000 in your browser to see the app in action.
 Open http://localhost:5555 in your browser to see the prisma schema
@@ -52,50 +46,57 @@ Here's a quick overview of the project structure:
 
 # Project Structure
 
-## MAGIC-BRIEF-TODO
+# MAGIC-BRIEF-TODO
 
+This is a Todo List application built with Next.js, Prisma, and tRPC. The application supports offline functionality and utilizes Tailwind CSS for styling.
+
+## Project Structure
+
+```plaintext
+MAGIC-BRIEF-TODO
 ├── .next
 ├── node_modules
 ├── prisma # Prisma schema and migrations
-│ ├── migrations
-│ │ └── dev.db
-│ └── schema.prisma
+│   ├── migrations
+│   │   └── dev.db
+│   └── schema.prisma
 ├── public
 ├── src
-│ ├── components #
-│ ├── hooks #
-│ │ └── mutations
-│ │ ├── index.ts
-│ │ ├── useCreateTaskMutation.tsx
-│ │ ├── useDeleteAllTasksMutation.tsx
-│ │ ├── useDeleteTaskMutation.tsx
-│ │ ├── useUpdateOrCreateTasksMutation.tsx
-│ │ └── useUpdateTaskMutation.tsx
-│ ├── interfaces #
-│ │ ├── common
-│ │ └── db
-│ │ └── index.ts
-│ ├── pages # Next.js pages
-│ │ ├── api
-│ │ │ └── trpc
-│ │ │ └── [trpc].ts
-│ │ ├── \_app.tsx
-│ │ ├── \_document.tsx
-│ │ └── index.tsx
-│ ├── server # tRPC router and context
-│ │ ├── context.ts
-│ │ ├── router.ts
-│ │ └── task.router.ts
-│ ├── styles # Tailwind CSS styles
-│ │ └── globals.css
-│ ├── types #
-│ │ ├── common
-│ │ └── db
-│ │ └── index.ts
-│ └── utils # Utility functions
-│ ├── formatDatePickerDate.ts
-│ ├── generateUniqueNumber.ts
-│ ├── handleConsoleError.ts
-│ ├── index.ts
-│ ├── localStorageHelpers.ts
-│ └── trpc.ts
+│   ├── components #
+│   ├── hooks #
+│   │   └── mutations
+│   │       ├── index.ts
+│   │       ├── useCreateTaskMutation.tsx
+│   │       ├── useDeleteAllTasksMutation.tsx
+│   │       ├── useDeleteTaskMutation.tsx
+│   │       ├── useUpdateOrCreateTasksMutation.tsx
+│   │       └── useUpdateTaskMutation.tsx
+│   ├── interfaces #
+│   │   ├── common
+│   │   └── db
+│   │       └── index.ts
+│   ├── pages # Next.js pages
+│   │   ├── api
+│   │   │   └── trpc
+│   │   │       └── [trpc].ts
+│   │   ├── _app.tsx
+│   │   ├── _document.tsx
+│   │   └── index.tsx
+│   ├── server # tRPC router and context
+│   │   ├── context.ts
+│   │   ├── router.ts
+│   │   └── task.router.ts
+│   ├── styles # Tailwind CSS styles
+│   │   └── globals.css
+│   ├── types #
+│   │   ├── common
+│   │   └── db
+│   │       └── index.ts
+│   └── utils # Utility functions
+│       ├── formatDatePickerDate.ts
+│       ├── generateUniqueNumber.ts
+│       ├── handleConsoleError.ts
+│       ├── index.ts
+│       ├── localStorageHelpers.ts
+│       └── trpc.ts
+```
