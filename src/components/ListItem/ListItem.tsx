@@ -1,8 +1,6 @@
 import React, { memo, useCallback } from 'react';
 import cx from 'classnames';
-
 import { ListItemProps } from './ListItem.interfaces';
-
 import { ButtonIconOnly, StatusTag } from '@/components';
 import { useDeleteTaskMutation } from '@/hooks';
 import { handleConsoleError } from '@/utils';
@@ -29,7 +27,7 @@ const ListItem = ({
   const handleDeleteTask = useCallback(() => {
     onDelete(id);
     deleteTaskMutation({ id });
-  }, [deleteTaskMutation, item]);
+  }, [deleteTaskMutation, onDelete, id]);
 
   const ListItemElement = isList ? 'li' : 'div';
 
@@ -65,7 +63,6 @@ const ListItem = ({
           {title}
         </h2>
       </div>
-
       <div
         className={cx(
           'flex items-center',

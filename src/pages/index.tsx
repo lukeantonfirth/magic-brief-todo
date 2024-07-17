@@ -1,23 +1,14 @@
 'use client';
 
-import React, {
-  useCallback,
-  useState,
-  useEffect,
-  ChangeEvent,
-} from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import type { NextPage } from 'next';
-
 import { DateValue } from 'react-aria-components';
-
 import { Task } from '@prisma/client';
 import cx from 'classnames';
-
 import {
   useDeleteAllTaskMutation,
   useUpdateOrCreateTasksMutation,
 } from '@/hooks';
-
 import {
   formatDatePickerDate,
   generateUniqueNumber,
@@ -27,7 +18,6 @@ import {
   trpc,
   waitForOnline,
 } from '@/utils';
-
 import {
   Container,
   Header,
@@ -73,7 +63,7 @@ const Home: NextPage = () => {
     },
   });
 
-  const handleDeleteAllTasks = useCallback(() => {
+  const handleDeleteAllTasks = () => {
     setLiveList([]);
     saveTasksToLocalStorage([]);
 
@@ -81,12 +71,10 @@ const Home: NextPage = () => {
       return;
     }
 
-    deleteAllTasksMutation({
-      ids: list.map((item) => item.id),
-    });
-  }, [list, deleteAllTasksMutation]);
+    deleteAllTasksMutation({ ids: list.map((item) => item.id) });
+  };
 
-  const handleCreateTask = useCallback(() => {
+  const handleCreateTask = () => {
     if (!taskName) {
       return;
     }
@@ -94,58 +82,48 @@ const Home: NextPage = () => {
     const newTask: Task = {
       completed: false,
       dueDate: formattedDate,
-      id: Number(generateUniqueNumber()), //temp offline id
+      id: Number(generateUniqueNumber()), // temp offline id
       title: taskName,
     } as const;
 
     setLiveList((prevList) => {
       const updatedList = [...prevList, newTask];
-
       saveTasksToLocalStorage(updatedList);
-
       return updatedList;
     });
 
     updateOrCreateTasksMutation([newTask]);
-
     setTaskName('');
-  }, [formattedDate, taskName, updateOrCreateTasksMutation]);
+  };
 
-  const handleUpdateTask = useCallback(
-    ({ completed, dueDate, id, title }: Task) => {
-      setLiveList((prevList) => {
-        const updatedList = prevList.map((task) =>
-          task.id === id ? { ...task, completed: !completed } : task,
-        );
+  const handleUpdateTask = ({
+    completed,
+    dueDate,
+    id,
+    title,
+  }: Task) => {
+    setLiveList((prevList) => {
+      const updatedList = prevList.map((task) =>
+        task.id === id ? { ...task, completed: !completed } : task,
+      );
+      saveTasksToLocalStorage(updatedList);
+      return updatedList;
+    });
 
-        saveTasksToLocalStorage(updatedList);
+    // Using upset to minimize code and simplify the synchronization
+    updateOrCreateTasksMutation([
+      { completed: !completed, dueDate, id, title },
+    ]);
+  };
 
-        return updatedList;
-      });
-
-      //Using upset to minimize code and simplify the syncronization
-      updateOrCreateTasksMutation([
-        {
-          completed: !completed,
-          dueDate: dueDate,
-          id,
-          title,
-        },
-      ]);
-    },
-    [updateOrCreateTasksMutation],
-  );
-
-  const handleDeleteTask = useCallback((id: Task['id']) => {
+  const handleDeleteTask = (id: Task['id']) => {
     // Running a filter here so we don't have to call the db
     setLiveList((prevList) => {
       const updatedList = prevList.filter((task) => task.id !== id);
-
       saveTasksToLocalStorage(updatedList);
-
       return updatedList;
     });
-  }, []);
+  };
 
   const handleOnDateChange = (date: DateValue) => {
     setFormattedDate(formatDatePickerDate(date));
@@ -154,16 +132,12 @@ const Home: NextPage = () => {
   const handleOnTaskNameInputChange = (
     event: ChangeEvent<HTMLInputElement>,
   ) => {
-    const {
-      target: { value },
-    } = event;
-
+    const { value } = event.target;
     setTaskName(value);
   };
 
-  const syncLocalTasksWithServer = useCallback(async () => {
+  const syncLocalTasksWithServer = async () => {
     await waitForOnline(); // Wait until the app is online
-
     const localTasks = loadTasksFromLocalStorage();
 
     if (!list) {
@@ -171,7 +145,7 @@ const Home: NextPage = () => {
     }
 
     updateOrCreateTasksMutation(localTasks);
-  }, [list, updateOrCreateTasksMutation]);
+  };
 
   useEffect(() => {
     setLiveList(loadTasksFromLocalStorage());
@@ -217,7 +191,7 @@ const Home: NextPage = () => {
               <ListItem
                 key={item.id}
                 item={item}
-                onDelete={() => handleDeleteTask(item.id)}
+                onDelete={handleDeleteTask}
                 onUpdate={handleUpdateTask}
               />
             ))}
