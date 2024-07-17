@@ -24,22 +24,22 @@ Follow these steps to get the project up and running on your local machine:
 
 Make sure you have `yarn` installed. If not, install it from [here](https://classic.yarnpkg.com/en/docs/install/).
 
--`git clone git@github.com:lukeantonfirth/magic-brief-todo.git` 
--`cd magic-brief-todo` -`yarn`
+- `git clone git@github.com:lukeantonfirth/magic-brief-todo.git`
+- `cd magic-brief-todo` -`yarn`
 
 ## 2. Initialize Prisma and Set Up the Database
 
 Run the following commands to initialize Prisma with SQLite as the datasource provider, set up the database, and open Prisma Studio:
 
--`npx prisma init --datasource-provider sqlite`
--`npx prisma migrate dev --name init`
--`npx prisma studio` This will open up a visual of the db
+- `npx prisma init --datasource-provider sqlite`
+- `npx prisma migrate dev --name init`
+- `npx prisma studio` This will open up a visual of the db
 
 ## 3. Run the Development Server
 
 You're all set! Start the development server:
 
--`yarn dev`
+- `yarn dev`
 
 Open http://localhost:3000 in your browser to see the app in action.
 Open http://localhost:5555 in your browser to see the prisma schema
