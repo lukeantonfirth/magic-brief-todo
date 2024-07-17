@@ -36,8 +36,8 @@ const ListItem = ({
   return (
     <ListItemElement
       className={cx(
-        'flex items-center justify-start', // Layout
-        'h-12',
+        'flex flex-col sm:flex-row items-center justify-start',
+        'py-3',
         'px-3',
         'border-b',
         { 'list-none': isList },
