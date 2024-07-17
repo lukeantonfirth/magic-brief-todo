@@ -52,13 +52,17 @@ export const Header = ({
         className={cx(
           'text-sm',
           'font-medium',
-          'text-red-800', // Dark red text color
+          'text-red-800',
           'bg-transparent',
           'rounded-md',
           'px-3',
           'py-1',
           'border-2',
-          'border-red-400', // 2px border with red 400 color
+          'border-red-400',
+          'hover:bg-red-400',
+          'hover:text-white',
+          'transition-colors',
+          'duration-100',
         )}
         type="button"
         onClick={onDeleteAllTasks}
