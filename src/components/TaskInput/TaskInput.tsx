@@ -46,15 +46,15 @@ export const TaskInput = ({
         <DatePicker
           id="task-date"
           onDateChange={onDateChange}
-          additionalClassNames={cx('top-[55px]', 'left-[12px]')}
+          additionalClassNames={cx('top-[60px]', 'left-[12px]')}
         />
 
         <ButtonIconOnly
           type="submit"
           additionalClassNames={cx(
             'absolute',
-            'top-1/2',
-            'right-4',
+            'top-[75px]',
+            'right-[10px]',
             'transform',
             '-translate-y-1/2',
           )}
