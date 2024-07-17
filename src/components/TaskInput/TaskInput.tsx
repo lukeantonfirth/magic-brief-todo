@@ -18,7 +18,7 @@ export const TaskInput = ({
 
   return (
     <form onSubmit={handleSubmit}>
-      <fieldset className="w-full relative flex items-center">
+      <fieldset className="w-full relative flex items-baseline h-[100px]">
         <legend className="sr-only">Add New Task</legend>
 
         <label htmlFor="task-input" className="sr-only">
@@ -46,7 +46,7 @@ export const TaskInput = ({
         <DatePicker
           id="task-date"
           onDateChange={onDateChange}
-          additionalClassNames={cx('right-16')}
+          additionalClassNames={cx('top-[55px]', 'left-[12px]')}
         />
 
         <ButtonIconOnly

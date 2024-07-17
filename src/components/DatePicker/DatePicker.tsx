@@ -65,7 +65,6 @@ export const AriaDatePicker = ({
           'border',
           'rounded-md',
           'shadow-lg',
-          '!left-[975px]',
         )}>
         <Dialog>
           <Calendar>
