@@ -74,6 +74,9 @@ const Home: NextPage = () => {
   });
 
   const handleDeleteAllTasks = useCallback(() => {
+    setLiveList([]);
+    saveTasksToLocalStorage([]);
+
     if (!list) {
       return;
     }
@@ -81,9 +84,6 @@ const Home: NextPage = () => {
     deleteAllTasksMutation({
       ids: list.map((item) => item.id),
     });
-
-    setLiveList([]);
-    saveTasksToLocalStorage([]);
   }, [list, deleteAllTasksMutation]);
 
   const handleCreateTask = useCallback(() => {
